@@ -1,101 +1,243 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import { socket } from "./socket";
+
+import { useSprings, animated, to as interpolate } from "@react-spring/web";
+import { useDrag } from "react-use-gesture";
+
+import styles from "../styles.module.css";
+
+const cards = [
+  "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/690px-RWS_Tarot_02_High_Priestess.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+];
+
+// Animation helpers
+const to = (i: number) => ({
+  x: 0,
+  y: 0,
+  // y: 0
+  scale: 1,
+  rot: -10 + Math.random() * 20,
+  delay: i * 100,
+});
+const from = (_i: number) => ({ x: 0, rot: 0, scale: 1, y: 0 });
+// This is being used down there in the view, it interpolates rotation and scale into a css transform
+const trans = (r: number, s: number) =>
+  `perspective(1500px) rotateX(30deg) rotateY(${
+    r / 10
+  }deg) rotateZ(${r}deg) scale(${s})`;
+
+function Deck() {
+  const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
+  const [props, api] = useSprings(cards.length, (i) => ({
+    ...to(i),
+    from: from(i),
+  })); // Create a bunch of springs using the helpers above
+  // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
+  const bind = useDrag(
+    ({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
+      const trigger = velocity > 0.2; // If you flick hard enough it should trigger the card to fly out
+      const dir = xDir < 0 ? -1 : 1; // Direction should either point left or right
+      if (!down && trigger) gone.add(index); // If button/finger's up and trigger velocity is reached, we flag the card ready to fly out
+      api.start((i) => {
+        if (index !== i) return; // We're only interested in changing spring-data for the current spring
+        const isGone = gone.has(index);
+        const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
+        const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0); // How much the card tilts, flicking it harder makes it rotate faster
+        const scale = down ? 1.1 : 1; // Active cards lift up a bit
+        return {
+          x,
+          rot,
+          scale,
+          delay: undefined,
+          config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
+        };
+      });
+      if (!down && gone.size === cards.length)
+        setTimeout(() => {
+          gone.clear();
+          api.start((i) => to(i));
+        }, 600);
+    }
+  );
+  // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
+  return (
+    <>
+      {props.map(({ x, y, rot, scale }, i) => (
+        <animated.div
+          className={styles.deck}
+          key={i}
+          style={{ x, y, border: "2px solid red", padding: "20px" }}
+        >
+          {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
+          <animated.div
+            {...bind(i)}
+            style={{
+              transform: interpolate([rot, scale], trans),
+              backgroundImage: `url(${cards[i]})`,
+              border: "2px solid red",
+              padding: "20px",
+            }}
+          />
+        </animated.div>
+      ))}
+    </>
+  );
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [transport, setTransport] = useState<string>("N/A");
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]); // Ref to store audio chunks
+  const intervalRef = useRef<NodeJS.Timeout | null>(null); // Ref for the recording interval
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+    function onConnect() {
+      setIsConnected(true);
+      setTransport(socket.io.engine.transport.name);
+
+      socket.io.engine.on("upgrade", (transport) => {
+        setTransport(transport.name);
+      });
+    }
+
+    function onDisconnect() {
+      setIsConnected(false);
+      setTransport("N/A");
+      console.log("doing this");
+      socket.removeAllListeners();
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    // Cleanup function to remove event listeners
+    const cleanup = () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      stopRecording(); // Ensure recording is stopped
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+
+      // Clear previous audio chunks
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event: BlobEvent) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
+        const fileReader = new FileReader();
+
+        fileReader.onloadend = () => {
+          const base64String = fileReader.result as string;
+          console.log(base64String);
+          socket.emit("audioStream", base64String);
+          // socket.emit("lol", "hey");
+        };
+
+        fileReader.readAsDataURL(audioBlob);
+      };
+
+      mediaRecorder.start();
+      intervalRef.current = setInterval(() => {
+        mediaRecorder.stop();
+        mediaRecorder.start();
+      }, 1000);
+    } catch (error) {
+      console.error("Error recording audio: ", error);
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    mediaRecorderRef.current = null;
+  };
+
+  const toggleRecordAudio = () => {
+    if (isRecording) {
+      setIsRecording(false);
+      stopRecording();
+    } else {
+      setIsRecording(true);
+      startRecording();
+    }
+  };
+
+  return (
+    // <div className={styles.container}>
+    //   <p>Status: {isConnected ? "connected" : "disconnected"}</p>
+    //   <p>Transport: {transport}</p>
+    //   <button
+    //     onClick={toggleRecordAudio}
+    //     className={`px-6 py-3 rounded-lg font-semibold text-white shadow-md transition-colors duration-300 ${
+    //       isRecording
+    //         ? "bg-red-500 hover:bg-red-600"
+    //         : "bg-green-500 hover:bg-green-600"
+    //     }`}
+    //   >
+    //     {isRecording ? "Stop Recording" : "Start Recording"}
+    //   </button>
+    //   <div>
+    //     <Deck />
+    //   </div>
+    // </div>
+    <div
+      className={styles.container}
+      style={{ border: "2px solid red", padding: "20px" }}
+    >
+      <div style={{ border: "2px solid red", padding: "20px" }}>
+        <p>Status: {isConnected ? "connected" : "disconnected"}</p>
+        <p>Transport: {transport}</p>
+        <button
+          onClick={toggleRecordAudio}
+          className={`px-6 py-3 rounded-lg font-semibold text-white shadow-md transition-colors duration-300 ${
+            isRecording
+              ? "bg-red-500 hover:bg-red-600"
+              : "bg-green-500 hover:bg-green-600"
+          }`}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {isRecording ? "Stop Recording" : "Start Recording"}
+        </button>
+      </div>
+      <Deck />
     </div>
   );
 }
