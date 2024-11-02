@@ -33,147 +33,13 @@ const trans = (r: number, s: number) =>
     r / 10
   }deg) rotateZ(${r}deg) scale(${s})`;
 
-// function Deck() {
-//   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
-//   const [props, api] = useSprings(cards.length, (i) => ({
-//     ...to(i),
-//     from: from(i),
-//   })); // Create a bunch of springs using the helpers above
-//   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
-
-//   const currentIndex = useRef(cards.length); // Ref to track the current index
-
-//   const bind = useDrag(
-//     ({
-//       args: [index],
-//       down,
-//       movement: [mx, my],
-//       direction: [xDir, yDir],
-//       velocity,
-//     }) => {
-//       const trigger = velocity > 0.2; // If you flick hard enough it should trigger the card to fly out
-//       // let dirX = xDir < 0 ? -1 : 1; // Direction should either point left or right
-
-//       // let dirY = yDir < 0 ? -1 : 1;
-//       let dirX = -1;
-//       let dirY = -1;
-//       if (Math.abs(xDir) < Math.abs(yDir)) {
-//         dirX = 0;
-//         dirY = yDir < 0 ? -1 : 1;
-//       } else {
-//         dirX = xDir < 0 ? -1 : 1;
-//         dirY = 0;
-//       }
-
-//       if (!down && trigger) gone.add(index); // If button/finger's up and trigger velocity is reached, we flag the card ready to fly out
-//       api.start((i) => {
-//         if (index !== i) return; // We're only interested in changing spring-data for the current spring
-//         const isGone = gone.has(index);
-//         const x = isGone ? (200 + window.innerWidth) * dirX : down ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
-//         const y = isGone ? (200 + window.innerWidth) * dirY : down ? my : 0;
-//         // const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0); // How much the card tilts, flicking it harder makes it rotate faster
-//         const scale = down ? 1.1 : 1; // Active cards lift up a bit
-//         return {
-//           x,
-//           y,
-//           // rot,
-//           scale,
-//           delay: undefined,
-//           config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
-//         };
-//       });
-//       if (!down && gone.size === cards.length)
-//         setTimeout(() => {
-//           gone.clear();
-//           api.start((i) => to(i));
-//         }, 600);
-//     }
-//   );
-
-//   useEffect(() => {
-//     const handleKeyDown = (event) => {
-//       console.log(currentIndex);
-//       if (event.key === "ArrowRight") {
-//         currentIndex.current = (currentIndex.current - 1) % cards.length; // Move right
-//         api.start((i) => {
-//           if (i === currentIndex.current) {
-//             return {
-//               x: 200 + window.innerWidth,
-//               config: { tension: 500, friction: 50 },
-//             }; // Animate out
-//           }
-//           return {};
-//         });
-//         if (currentIndex.current == 0) {
-//           setTimeout(() => {
-//             gone.clear();
-//             api.start((i) => to(i));
-//           }, 600);
-//           currentIndex.current = cards.length;
-//         }
-//       } else if (event.key === "ArrowLeft") {
-//         currentIndex.current = currentIndex.current =
-//           (currentIndex.current - 1) % cards.length; // Move left
-//         api.start((i) => {
-//           if (i === currentIndex.current) {
-//             return {
-//               x: -(200 + window.innerWidth),
-//               config: { tension: 500, friction: 50 },
-//             }; // Animate out
-//           }
-//           return {};
-//         });
-//         if (currentIndex.current == 0) {
-//           setTimeout(() => {
-//             gone.clear();
-//             api.start((i) => to(i));
-//           }, 600);
-//           currentIndex.current = cards.length;
-//         }
-//       }
-//     };
-
-//     window.addEventListener("keydown", handleKeyDown);
-
-//     return () => {
-//       window.removeEventListener("keydown", handleKeyDown);
-//     };
-//   }, [api]);
-
-//   // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
-//   return (
-//     <>
-//       {props.map(({ x, y, rot, scale }, i) => (
-//         <animated.div
-//           className={styles.deck}
-//           key={i}
-//           style={{ x, y, border: "2px solid red", padding: "20px" }}
-//         >
-//           {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
-//           <animated.div
-//             {...bind(i)}
-//             style={{
-//               transform: interpolate([rot, scale], trans),
-//               backgroundImage: `url(${cards[i]})`,
-//               border: "2px solid red",
-//               padding: "20px",
-//             }}
-//           />
-//         </animated.div>
-//       ))}
-//     </>
-//   );
-// }
-
 function Deck() {
-  const [gone, setGone] = useState(new Set()); // Track cards that are gone
-  const [displayedCards, setDisplayedCards] = useState(cards); // State to hold currently displayed cards
-  const [props, api] = useSprings(displayedCards.length, (i) => ({
+  const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
+  const [props, api] = useSprings(cards.length, (i) => ({
     ...to(i),
     from: from(i),
-  }));
-
-  const currentIndex = useRef(0); // Track the current index
+  })); // Create a bunch of springs using the helpers above
+  // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
 
   const bind = useDrag(
     ({
@@ -183,11 +49,13 @@ function Deck() {
       direction: [xDir, yDir],
       velocity,
     }) => {
-      const trigger = velocity > 0.2; // Check if flick was hard enough
+      console.log("dragged" + index);
+      const trigger = velocity > 0.2; // If you flick hard enough it should trigger the card to fly out
+      // let dirX = xDir < 0 ? -1 : 1; // Direction should either point left or right
 
+      // let dirY = yDir < 0 ? -1 : 1;
       let dirX = -1;
       let dirY = -1;
-
       if (Math.abs(xDir) < Math.abs(yDir)) {
         dirX = 0;
         dirY = yDir < 0 ? -1 : 1;
@@ -197,77 +65,33 @@ function Deck() {
       }
 
       if (!down && trigger) {
-        gone.add(index); // Mark the card as gone
-        api.start((i) => {
-          if (index !== i) return;
-          const isGone = gone.has(index);
-          const x = isGone ? (200 + window.innerWidth) * dirX : down ? mx : 0;
-          const y = isGone ? (200 + window.innerWidth) * dirY : down ? my : 0;
-          const scale = down ? 1.1 : 1;
-
-          return {
-            x,
-            y,
-            scale,
-            delay: undefined,
-            config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
-          };
-        });
-
-        // Move the card to the bottom of the deck
-        if (gone.size === 1) {
-          setTimeout(() => {
-            setGone(new Set()); // Reset gone
-            const newCardOrder = [
-              ...displayedCards.slice(1),
-              displayedCards[0],
-            ]; // Move the first card to the end
-            setDisplayedCards(newCardOrder);
-            api.start((i) => to(i)); // Reset animations
-          }, 600);
-        }
+        gone.add(index);
       }
+      api.start((i) => {
+        if (index !== i) return; // We're only interested in changing spring-data for the current spring
+        const isGone = gone.has(index);
+        const x = isGone ? (200 + window.innerWidth) * dirX : down ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
+        const y = isGone ? (200 + window.innerWidth) * dirY : down ? my : 0;
+        // const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0); // How much the card tilts, flicking it harder makes it rotate faster
+        const scale = down ? 1.1 : 1; // Active cards lift up a bit
+        return {
+          x,
+          y,
+          // rot,
+          scale,
+          delay: undefined,
+          config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
+        };
+      });
+      if (!down && gone.size === cards.length)
+        setTimeout(() => {
+          gone.clear();
+          api.start((i) => to(i));
+        }, 600);
     }
   );
 
-  // Keyboard controls
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowRight") {
-        currentIndex.current =
-          (currentIndex.current + 1) % displayedCards.length; // Move right
-        api.start((i) => {
-          if (i === currentIndex.current) {
-            return {
-              x: 200 + window.innerWidth,
-              config: { tension: 500, friction: 50 },
-            };
-          }
-          return {};
-        });
-      } else if (event.key === "ArrowLeft") {
-        currentIndex.current =
-          (currentIndex.current - 1 + displayedCards.length) %
-          displayedCards.length; // Move left
-        api.start((i) => {
-          if (i === currentIndex.current) {
-            return {
-              x: -(200 + window.innerWidth),
-              config: { tension: 500, friction: 50 },
-            };
-          }
-          return {};
-        });
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [api, displayedCards]);
-
+  // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
   return (
     <>
       {props.map(({ x, y, rot, scale }, i) => (
@@ -276,11 +100,12 @@ function Deck() {
           key={i}
           style={{ x, y, border: "2px solid red", padding: "20px" }}
         >
+          {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
           <animated.div
             {...bind(i)}
             style={{
               transform: interpolate([rot, scale], trans),
-              backgroundImage: `url(${displayedCards[i]})`,
+              backgroundImage: `url(${cards[i]})`,
               border: "2px solid red",
               padding: "20px",
             }}
