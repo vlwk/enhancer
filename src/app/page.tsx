@@ -158,15 +158,17 @@ function Deck({ onSendInfo, command, lock }) {
       //   onSendInfo("hey");
       // }
 
-      // if (command === "snap") {
-      //   console.log("snap triggered in Deck");
-      //   api.start((i) => {
-      //     return {
-      //       x: 0,
-      //       y: 0,
-      //     };
-      //   });
-      // }
+      if (command === "snap") {
+        console.log("snap triggered in Deck");
+        const newCards = cards.map(
+          (cardGroup) =>
+            cardGroup.map(
+              () =>
+                "https://wallpapers.com/images/featured/blank-white-7sn5o1woonmklx1h.jpg"
+            ) // Replace each image with the white picture
+        );
+        setCards(newCards);
+      }
 
       if (command === "zoomin") {
         console.log("zoomin triggered in Deck");
