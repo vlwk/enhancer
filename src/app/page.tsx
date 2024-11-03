@@ -125,21 +125,74 @@ function Deck({ onSendInfo, command, lock }) {
         onSendInfo("hey");
       }
 
+      if (command === "reset") {
+        console.log("reset triggered in Deck");
+        api.start((i) => {
+          if (i === currentCardIndex) {
+            setCards((prevCards) => {
+              const newCards = [...prevCards];
+              let idx: number = newCards[i][1];
+              console.log(idx);
+              newCards[i] = [initialCards[i][0], 0];
+              return newCards;
+            });
+          }
+          return {};
+        });
+        onSendInfo("hey");
+      }
+
       //swipe,throw,point,snap,zoomin,middle
 
-      if (command === "")
-        if (command === "zoomin") {
-          console.log("zoomin triggered in Deck");
+      // if (command === "")
+      // if (command === "zoomin") {
+      //   console.log("zoomin triggered in Deck");
+      //   api.start((i) => {
+      //     if (i === currentCardIndex) {
+      //       return {
+      //         scale: 2.0,
+      //       };
+      //     }
+      //     return {};
+      //   });
+      //   onSendInfo("hey");
+      // }
+
+      // if (command === "snap") {
+      //   console.log("snap triggered in Deck");
+      //   api.start((i) => {
+      //     return {
+      //       x: 0,
+      //       y: 0,
+      //     };
+      //   });
+      // }
+
+      if (command === "zoomin") {
+        console.log("zoomin triggered in Deck");
+
+        // Start the zoom-in effect
+        api.start((i) => {
+          if (i === currentCardIndex) {
+            return {
+              scale: 2.0, // Zoom in
+            };
+          }
+          return {};
+        });
+
+        // Set a timeout to zoom out after 2 seconds
+        setTimeout(() => {
           api.start((i) => {
             if (i === currentCardIndex) {
               return {
-                scale: 2.0,
+                scale: 1.0, // Zoom out
               };
             }
             return {};
           });
-          onSendInfo("hey");
-        }
+        }, 2000); // 2 seconds
+      }
 
       if (command === "swipe") {
         // gesture
@@ -322,7 +375,7 @@ export default function Home() {
         console.log("Received message: ", message);
 
         if (message == "middle") {
-          setLock((lock) => true);
+          setLock((lock) => !lock);
         }
         setCommand(message);
       });

@@ -46,7 +46,7 @@
     auto;
     display: flex;
     flex-direction: column;
-    height: 50%;
+    height: 65%;
     width: 100%;
     border: 2px solid red;
     padding: 10px;
@@ -60,7 +60,7 @@
     auto;
     display: flex;
     flex-direction: column;
-    height: 50%;
+    height: 35%;
     width: 100%;
     border: 2px solid red;
     padding: 10px;
