@@ -371,6 +371,12 @@ export default function Home() {
         if (message == "snap") {
           const audio = new Audio("avengers.mp3");
           audio.play();
+          // audio.play();
+        }
+        if (message == "enhance") {
+          const audio = new Audio("mixkit-water-sci-fi-bleep-902.wav");
+          // audio.muted = true; // Mute initially
+          audio.play();
         }
         setCommand(message);
       });
@@ -500,7 +506,16 @@ export default function Home() {
           <div className={styles2.neon}>Transport:{" " + transport}</div>
         </div>
         <div className={styles2.container}>
-          <button onClick={toggleRecordAudio} className={styles2.neonbutton}>
+          <button
+            onClick={toggleRecordAudio}
+            className={styles2.neonbutton}
+            onMouseOver={() => {
+              const audio = new Audio("buttonsound.wav");
+              // audio.muted = true; // Mute initially
+              audio.play();
+              // sound.play();
+            }}
+          >
             {isRecording ? "Stop Recording" : "Start Recording"}
           </button>
         </div>
