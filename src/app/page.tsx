@@ -83,7 +83,7 @@ const trans = (r: number, s: number) =>
     r / 10
   }deg) rotateZ(${r}deg) scale(${s})`;
 
-function Deck({ onSendInfo, command }) {
+function Deck({ onSendInfo, command, lock }) {
   const [cards, setCards] = useState(() => {
     return initialCards.map((card) => [card[0], 0]);
   });
@@ -96,147 +96,150 @@ function Deck({ onSendInfo, command }) {
   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
 
   useEffect(() => {
-    //back, sus, reset
-    if (command === "zoom") {
-      // voice
-      console.log("zoom triggered in Deck");
-      window.open("zoomus://zoom.us/start"); // Opens the Zoom app
-    }
+    if (!lock) {
+      //back, sus, reset
+      if (command === "zoom") {
+        // voice
+        console.log("zoom triggered in Deck");
+        window.open("zoomus://zoom.us/start"); // Opens the Zoom app
+      }
 
-    if (command === "enhance") {
-      // voice
-      console.log("enhance triggered in Deck");
+      if (command === "enhance") {
+        // voice
+        console.log("enhance triggered in Deck");
 
-      api.start((i) => {
-        if (i === currentCardIndex) {
-          setCards((prevCards) => {
-            const newCards = [...prevCards];
-            let idx: number = newCards[i][1];
-            console.log(idx);
-            if (initialCards[i].length > idx + 1) {
-              newCards[i] = [initialCards[i][idx + 1], idx + 1];
-            }
-            return newCards;
-          });
-        }
-        return {}; // Keep other cards in place
-      });
-      onSendInfo("hey");
-    }
-
-    //swipe,throw,point,snap,zoomin,middle
-
-    if (command === "")
-      if (command === "zoomin") {
-        console.log("zoomin triggered in Deck");
         api.start((i) => {
           if (i === currentCardIndex) {
-            return {
-              scale: 2.0,
-            };
+            setCards((prevCards) => {
+              const newCards = [...prevCards];
+              let idx: number = newCards[i][1];
+              console.log(idx);
+              if (initialCards[i].length > idx + 1) {
+                newCards[i] = [initialCards[i][idx + 1], idx + 1];
+              }
+              return newCards;
+            });
           }
-          return {};
+          return {}; // Keep other cards in place
         });
         onSendInfo("hey");
       }
 
-    if (command === "swipe") {
-      // gesture
-      console.log("swipe triggered in Deck");
-      console.log(currentCardIndex);
+      //swipe,throw,point,snap,zoomin,middle
 
-      api.start((i) => {
-        if (i === currentCardIndex) {
-          return {
-            x: -(1000 + window.innerWidth),
-          };
+      if (command === "")
+        if (command === "zoomin") {
+          console.log("zoomin triggered in Deck");
+          api.start((i) => {
+            if (i === currentCardIndex) {
+              return {
+                scale: 2.0,
+              };
+            }
+            return {};
+          });
+          onSendInfo("hey");
         }
-        return {}; // Keep other cards in place
-      });
 
-      setCurrentCardIndex((prevIndex) => {
-        for (let i = prevIndex - 1; i >= 0; i--) {
-          if (isInArray[i]) {
-            return i;
-          }
-        }
+      if (command === "swipe") {
+        // gesture
+        console.log("swipe triggered in Deck");
+        console.log(currentCardIndex);
+
         api.start((i) => {
-          if (isInArray[i]) {
-            return to(i);
+          if (i === currentCardIndex) {
+            return {
+              x: -(1000 + window.innerWidth),
+            };
           }
+          return {}; // Keep other cards in place
         });
-        for (let i = isInArray.length - 1; i >= 0; i--) {
-          if (isInArray[i]) {
-            return i;
+
+        setCurrentCardIndex((prevIndex) => {
+          for (let i = prevIndex - 1; i >= 0; i--) {
+            if (isInArray[i]) {
+              return i;
+            }
           }
-        }
-        return -1;
-      });
-
-      onSendInfo("hey");
-    }
-
-    if (command === "throw" || command === "delete") {
-      // gesture
-      console.log("throw triggered in Deck");
-      console.log(currentCardIndex);
-
-      const startX = 0; // Starting x position (centered)
-      const endX = -window.innerWidth / 2; // Ending x position (bottom left)
-      const endY = window.innerHeight / 2; // Ending y position (bottom of the screen)
-      const duration = 500; // Duration of the animation in milliseconds
-
-      // Parabolic motion with shrinking and spinning effect
-      const parabolicPath = (t) => {
-        const progress = t / duration; // Normalized time
-        const height = (window.innerHeight / 4) * Math.sin(Math.PI * progress); // Up then down
-        const scale = 1 - progress * 0.5; // Shrink to 50% of original size
-        const x = startX + (endX - startX) * progress; // Linear interpolation for x
-        const y = height; // Move up and down
-        const rotation = progress * 720; // Rotate 720 degrees over the duration
-        return { x, y, scale, rotation };
-      };
-
-      const animate = () => {
-        let startTime;
-
-        const step = (time) => {
-          if (!startTime) startTime = time;
-          const elapsed = time - startTime;
-
-          if (elapsed < duration) {
-            const { x, y, scale, rotation } = parabolicPath(elapsed);
-            api.start((i) => {
-              if (i === currentCardIndex) {
-                return { x, y, scale, rot: rotation }; // Update position, scale, and rotation
-              }
-              return {}; // Keep other cards in place
-            });
-            requestAnimationFrame(step); // Continue animation
-          } else {
-            // Final position when animation ends
-            api.start((i) => {
-              if (i === currentCardIndex) {
-                return { x: endX, y: endY, scale: 0, rot: 720 }; // Final position and rotation
-              }
-              return {}; // Keep other cards in place
-            });
+          api.start((i) => {
+            if (isInArray[i]) {
+              return to(i);
+            }
+          });
+          for (let i = isInArray.length - 1; i >= 0; i--) {
+            if (isInArray[i]) {
+              return i;
+            }
           }
+          return -1;
+        });
+
+        onSendInfo("hey");
+      }
+
+      if (command === "throw" || command === "delete") {
+        // gesture
+        console.log("throw triggered in Deck");
+        console.log(currentCardIndex);
+
+        const startX = 0; // Starting x position (centered)
+        const endX = -window.innerWidth / 2; // Ending x position (bottom left)
+        const endY = window.innerHeight / 2; // Ending y position (bottom of the screen)
+        const duration = 500; // Duration of the animation in milliseconds
+
+        // Parabolic motion with shrinking and spinning effect
+        const parabolicPath = (t) => {
+          const progress = t / duration; // Normalized time
+          const height =
+            (window.innerHeight / 4) * Math.sin(Math.PI * progress); // Up then down
+          const scale = 1 - progress * 0.5; // Shrink to 50% of original size
+          const x = startX + (endX - startX) * progress; // Linear interpolation for x
+          const y = height; // Move up and down
+          const rotation = progress * 720; // Rotate 720 degrees over the duration
+          return { x, y, scale, rotation };
         };
 
-        requestAnimationFrame(step); // Start the animation
-      };
+        const animate = () => {
+          let startTime;
 
-      animate(); // Call the animate function
+          const step = (time) => {
+            if (!startTime) startTime = time;
+            const elapsed = time - startTime;
 
-      // Update the array state to mark the card as deleted
-      setIsInArray((prevArray) => {
-        const newArray = [...prevArray]; // Create a copy of the previous state
-        newArray[currentCardIndex] = false; // Set the desired index to false
-        return newArray; // Return the updated array
-      });
+            if (elapsed < duration) {
+              const { x, y, scale, rotation } = parabolicPath(elapsed);
+              api.start((i) => {
+                if (i === currentCardIndex) {
+                  return { x, y, scale, rot: rotation }; // Update position, scale, and rotation
+                }
+                return {}; // Keep other cards in place
+              });
+              requestAnimationFrame(step); // Continue animation
+            } else {
+              // Final position when animation ends
+              api.start((i) => {
+                if (i === currentCardIndex) {
+                  return { x: endX, y: endY, scale: 0, rot: 720 }; // Final position and rotation
+                }
+                return {}; // Keep other cards in place
+              });
+            }
+          };
 
-      onSendInfo("hey");
+          requestAnimationFrame(step); // Start the animation
+        };
+
+        animate(); // Call the animate function
+
+        // Update the array state to mark the card as deleted
+        setIsInArray((prevArray) => {
+          const newArray = [...prevArray]; // Create a copy of the previous state
+          newArray[currentCardIndex] = false; // Set the desired index to false
+          return newArray; // Return the updated array
+        });
+
+        onSendInfo("hey");
+      }
     }
   }, [command]); // Add dependencies for useEffect
 
@@ -292,6 +295,7 @@ export default function Home() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [transport, setTransport] = useState<string>("N/A");
   const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [lock, setLock] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]); // Ref to store audio chunks
@@ -314,9 +318,12 @@ export default function Home() {
       socket.io.engine.on("upgrade", (transport) => {
         setTransport(transport.name);
       });
-
       socket.on("returnCommand", (message) => {
         console.log("Received message: ", message);
+
+        if (message == "middle") {
+          setLock((lock) => true);
+        }
         setCommand(message);
       });
     }
@@ -417,19 +424,32 @@ export default function Home() {
 
   return (
     <div className={styles.container} style={{ border: "2px solid red" }}>
+      <video
+        autoPlay
+        loop
+        muted
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
+        }}
+      >
+        <source src="surveil.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <div className={styles.container2}>
         <div className={styles2.container}>
-          <div className={styles2.neon}>Enhancer</div>
-        </div>
-        <div className={styles2.container}>
-          <p style={{ color: "white" }}>Status:</p>
-          <div className={styles2.flux}>
-            {isConnected ? "Connected" : "Disconnected"}
+          <div className={styles2.neon}>
+            Status:
+            {isConnected ? " Connected" : " Disconnected"}
           </div>
         </div>
         <div className={styles2.container}>
-          <p style={{ color: "white" }}>Transport:</p>
-          <div className={styles2.flux}>{transport}</div>
+          <div className={styles2.neon}>Transport:{" " + transport}</div>
         </div>
         <div className={styles2.container}>
           <button onClick={toggleRecordAudio} className={styles2.neonbutton}>
@@ -440,7 +460,11 @@ export default function Home() {
       <div className={styles.container3}>
         <div className={styles.container3a}>
           <div className={`${styles.container4} ${styles.flashingborder}`}>
-            <Deck onSendInfo={handleInfoFromChild} command={command} />
+            <Deck
+              onSendInfo={handleInfoFromChild}
+              command={command}
+              lock={lock}
+            />
           </div>
         </div>
         <div className={styles.container3b}>
@@ -451,6 +475,22 @@ export default function Home() {
           />
         </div>
       </div>
+      {lock && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage:
+              "url('https://ichef.bbci.co.uk/ace/standard/624/cpsprodpb/119C9/production/_89473127_frank_kendohacking.jpg')", // Replace with your overlay image path
+            backgroundSize: "cover",
+            opacity: 0.5, // Adjust opacity as needed
+            zIndex: 1, // Ensure it's above the card
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -10,14 +10,16 @@
   vertical-align: middle;
   /* border: 2px solid yellow; */
   width: 100%;
+  position: relative;
 }
 
 .neon {
   font-family: neon;
   color: #FB4264;
-  font-size: 3vw;
+  font-size: 2vw;
   line-height: 9vw;
   text-shadow: 0 0 3vw #F40A35;
+  position: relative;
 }
 
 .flux {
@@ -26,13 +28,29 @@
   font-size: 2vw;
   line-height: 4vw;
   text-shadow: 0 0 3vw #2356FF;
+  position: relative;
 }
+
+.neon2 {
+    font-family: neon;
+    color: #FB4264;
+    font-size: 1vw;
+    line-height: 9vw;
+    text-shadow: 0 0 3vw #F40A35;
+    position: relative;
+  }
 
 .neon {
   animation: neon 1s ease infinite;
   -moz-animation: neon 1s ease infinite;
   -webkit-animation: neon 1s ease infinite;
 }
+
+.neon2 {
+    animation: neon 1s ease infinite;
+    -moz-animation: neon 1s ease infinite;
+    -webkit-animation: neon 1s ease infinite;
+  }
 
 @keyframes neon {
   0%,
@@ -69,11 +87,11 @@
 
 .neonbutton {
     font-family: neon;
-    color: #FB4264;
+    color: white;
     font-size: 2vw; /* Adjust size as needed */
     padding: 15px 30px;
     /* border: none; */
-    border-color: #FB4264; /* Change border color on hover */
+    border-color: white; /* Change border color on hover */
     border-radius: 10px;
     background-color: transparent; /* Transparent background */
     position: relative;
@@ -85,8 +103,8 @@
   }
   
   .neonbutton:hover {
-    border-color: #FED128;
-    color: #FED128; /* Change color on hover */
+    border-color: #30ddff;
+    color: #30ddff; /* Change color on hover */
     text-shadow: 0 0 10px #FA1C16, 0 0 20px #FA1C16;
   }
   
