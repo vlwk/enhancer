@@ -96,6 +96,12 @@ function Deck({ onSendInfo, command, lock }) {
         onSendInfo("hey");
       }
 
+      if (command === "point") {
+        const imageUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Replace with your image URL
+        window.open(imageUrl, "_blank"); // Open in a new tab
+        onSendInfo("hey");
+      }
+
       if (command === "reset") {
         console.log("reset triggered in Deck");
         api.start((i) => {
@@ -131,6 +137,8 @@ function Deck({ onSendInfo, command, lock }) {
 
       if (command === "snap") {
         console.log("snap triggered in Deck");
+
+        setTimeout(() => {}, 2000);
         const newCards = cards.map(
           (cardGroup) =>
             cardGroup.map(
@@ -139,6 +147,7 @@ function Deck({ onSendInfo, command, lock }) {
             ) // Replace each image with the white picture
         );
         setCards(newCards);
+        onSendInfo("snap");
       }
 
       if (command === "zoomin") {
@@ -165,6 +174,7 @@ function Deck({ onSendInfo, command, lock }) {
             return {};
           });
         }, 2000); // 2 seconds
+        onSendInfo("hey");
       }
 
       if (command === "swipe") {
@@ -322,6 +332,7 @@ export default function Home() {
   const [transport, setTransport] = useState<string>("N/A");
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [lock, setLock] = useState(false);
+  const [snap, setSnap] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]); // Ref to store audio chunks
@@ -329,6 +340,13 @@ export default function Home() {
 
   const handleInfoFromChild = (info) => {
     console.log("Received from child:", info);
+    if (info == "snap") {
+      setSnap((snap) => true);
+
+      setTimeout(() => {
+        setSnap((snap) => false);
+      }, 2000);
+    }
     setCommand((command) => null);
   };
 
@@ -349,6 +367,10 @@ export default function Home() {
 
         if (message == "middle") {
           setLock((lock) => !lock);
+        }
+        if (message == "snap") {
+          const audio = new Audio("avengers.mp3");
+          audio.play();
         }
         setCommand(message);
       });
@@ -514,6 +536,22 @@ export default function Home() {
             backgroundSize: "cover",
             opacity: 0.5, // Adjust opacity as needed
             zIndex: 1, // Ensure it's above the card
+          }}
+        />
+      )}
+      {snap && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage:
+              "url('https://upload.wikimedia.org/wikipedia/en/a/a0/Thanos%27s_snap_from_Avengers_Infinity_War.gif')", // Replace with your overlay image path
+            backgroundSize: "cover",
+            opacity: 0.5, // Adjust opacity as needed
+            zIndex: 5, // Ensure it's above the card
           }}
         />
       )}
