@@ -316,7 +316,7 @@ function Deck({ onSendInfo, command, lock }) {
             style={{
               transform: interpolate([rot, scale], trans),
               backgroundImage: `url(${cards[i][0]})`,
-              // border: "2px solid red",
+              //border: "2px solid red",
               padding: "20px",
             }}
           />

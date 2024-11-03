@@ -103,13 +103,13 @@
   }
   
   .flashingborder {
-    border: 5px solid green; /* Initial border color */
+    border: 5px solid #6ef2ff; /* Initial border color */
     animation: flash 0.7s infinite alternate; /* Animation */
   }
   
   @keyframes flash {
     0% {
-      border-color: green; /* Start with green */
+      border-color: #6ef2ff; /* Start with green */
     }
     100% {
       border-color: transparent; /* Flash to transparent */

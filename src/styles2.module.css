@@ -15,10 +15,10 @@
 
 .neon {
   font-family: neon;
-  color: #FB4264;
+  color: #6ef2ff;
   font-size: 2vw;
   line-height: 9vw;
-  text-shadow: 0 0 3vw #F40A35;
+  text-shadow: 0 0 3vw #6ef2ff;
   position: relative;
 }
 
@@ -33,10 +33,10 @@
 
 .neon2 {
     font-family: neon;
-    color: #FB4264;
+    color: #6ef2ff;
     font-size: 1vw;
     line-height: 9vw;
-    text-shadow: 0 0 3vw #F40A35;
+    text-shadow: 0 0 3vw #6ef2ff;
     position: relative;
   }
 
@@ -55,12 +55,12 @@
 @keyframes neon {
   0%,
   100% {
-    text-shadow: 0 0 1vw #FA1C16, 0 0 3vw #FA1C16, 0 0 10vw #FA1C16, 0 0 10vw #FA1C16, 0 0 .4vw #FED128, .5vw .5vw .1vw #806914;
-    color: #FED128;
+    text-shadow: 0 0 1vw #6ef2ff, 0 0 3vw #6ef2ff, 0 0 10vw #6ef2ff, 0 0 10vw #6ef2ff, 0 0 .4vw #5271ff, .5vw .5vw .1vw #004aad;
+    color: #6ef2ff;
   }
   50% {
-    text-shadow: 0 0 .5vw #800E0B, 0 0 1.5vw #800E0B, 0 0 5vw #800E0B, 0 0 5vw #800E0B, 0 0 .2vw #800E0B, .5vw .5vw .1vw #40340A;
-    color: #806914;
+    text-shadow: 0 0 .5vw #5271ff, 0 0 1.5vw #5271ff, 0 0 5vw #5271ff, 0 0 5vw #5271ff, 0 0 .2vw #5271ff, .5vw .5vw .1vw #40340A;
+    color: #5271ff;
   }
 }
 
@@ -97,7 +97,7 @@
     position: relative;
     cursor: pointer;
     outline: none;
-    text-shadow: 0 0 3vw #F40A35;
+    text-shadow: 0 0 3vw #6ef2ff;
     overflow: hidden; /* To contain pseudo-elements */
     transition: color 0.3s ease, border-color 0.3s ease;
   }
@@ -105,7 +105,7 @@
   .neonbutton:hover {
     border-color: #30ddff;
     color: #30ddff; /* Change color on hover */
-    text-shadow: 0 0 10px #FA1C16, 0 0 20px #FA1C16;
+    text-shadow: 0 0 10px white, 0 0 20px white;
   }
   
   .neonbutton:before {
