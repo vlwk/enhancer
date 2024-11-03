@@ -596,6 +596,7 @@ export default function Home() {
             bottom: 0,
             zIndex: 5, // Ensure it's above the card
             overflow: "hidden", // Ensure no overflow
+            opacity: 0.8,
           }}
         >
           <video
