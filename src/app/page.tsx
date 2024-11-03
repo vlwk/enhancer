@@ -75,6 +75,21 @@ function Deck({ onSendInfo, command, lock }) {
         window.open("zoomus://zoom.us/start"); // Opens the Zoom app
       }
 
+      if (command === "sus") {
+        console.log("sus triggered in Deck");
+
+        setTimeout(() => {}, 2000);
+        const newCards = cards.map(
+          (cardGroup) =>
+            cardGroup.map(
+              () =>
+                "https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg"
+            ) // Replace each image with the white picture
+        );
+        setCards(newCards);
+        onSendInfo("hey");
+      }
+
       if (command === "enhance") {
         // voice
         console.log("enhance triggered in Deck");
@@ -345,7 +360,7 @@ export default function Home() {
 
       setTimeout(() => {
         setSnap((snap) => false);
-      }, 2000);
+      }, 6500);
     }
     setCommand((command) => null);
   };
@@ -554,7 +569,7 @@ export default function Home() {
           }}
         />
       )}
-      {snap && (
+      {/* {snap && (
         <div
           style={{
             position: "absolute",
@@ -569,6 +584,34 @@ export default function Home() {
             zIndex: 5, // Ensure it's above the card
           }}
         />
+      )} */}
+
+      {snap && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 5, // Ensure it's above the card
+            overflow: "hidden", // Ensure no overflow
+          }}
+        >
+          <video
+            autoPlay
+            loop
+            muted // Mute the video to avoid autoplay issues
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover", // Cover the entire div
+            }}
+          >
+            <source src="avengers2.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
       )}
     </div>
   );
