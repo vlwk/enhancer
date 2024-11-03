@@ -391,7 +391,7 @@ export default function Home() {
             <img
               src={"http://0.0.0.0:8080/webcam"}
               alt="Webcam Stream"
-              style={{ width: "100%", height: "auto" }}
+              style={{ width: "100%", height: "100%" }}
             />
           </div>
         </div>
