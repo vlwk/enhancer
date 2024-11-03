@@ -11,34 +11,10 @@ import styles2 from "../styles2.module.css";
 
 const initialCards = [
   [
-    "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
-  ],
-  [
-    "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  ],
-  [
-    "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
-  ],
-  [
-    "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
-  ],
-  [
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/690px-RWS_Tarot_02_High_Priestess.jpg",
-  ],
-  [
-    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  ],
-  [
     "https://upload.wikimedia.org/wikipedia/commons/1/13/Tunnel_View%2C_Yosemite_Valley%2C_Yosemite_NP_-_Diliff.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
   ],
   [
     "enhances/amogus_stage4.png",
-    "enhances/amogus_stage3.png",
     "enhances/amogus_stage2.png",
     "enhances/amogus_stage1.png",
     "enhances/amogus_stage0.png",
@@ -47,17 +23,12 @@ const initialCards = [
   [
     "enhances/small_stage6.png",
     "enhances/small_stage5.png",
-    "enhances/small_stage4.png",
-    "enhances/small_stage3.png",
     "enhances/small_stage2.png",
     "enhances/small_stage1.png",
-    "enhances/small_stage0.png",
     "enhances/small_stage.png",
   ],
   [
     "enhances/mystery_stage6.png",
-    "enhances/mystery_stage5.png",
-    "enhances/mystery_stage4.png",
     "enhances/mystery_stage3.png",
     "enhances/mystery_stage2.png",
     "enhances/mystery_stage1.png",
