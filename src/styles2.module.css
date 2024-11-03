@@ -1,0 +1,112 @@
+
+@font-face {
+  font-family: neon;
+  src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/707108/neon.ttf);
+}
+
+.container {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  /* border: 2px solid yellow; */
+  width: 100%;
+}
+
+.neon {
+  font-family: neon;
+  color: #FB4264;
+  font-size: 3vw;
+  line-height: 9vw;
+  text-shadow: 0 0 3vw #F40A35;
+}
+
+.flux {
+  font-family: neon;
+  color: #426DFB;
+  font-size: 2vw;
+  line-height: 4vw;
+  text-shadow: 0 0 3vw #2356FF;
+}
+
+.neon {
+  animation: neon 1s ease infinite;
+  -moz-animation: neon 1s ease infinite;
+  -webkit-animation: neon 1s ease infinite;
+}
+
+@keyframes neon {
+  0%,
+  100% {
+    text-shadow: 0 0 1vw #FA1C16, 0 0 3vw #FA1C16, 0 0 10vw #FA1C16, 0 0 10vw #FA1C16, 0 0 .4vw #FED128, .5vw .5vw .1vw #806914;
+    color: #FED128;
+  }
+  50% {
+    text-shadow: 0 0 .5vw #800E0B, 0 0 1.5vw #800E0B, 0 0 5vw #800E0B, 0 0 5vw #800E0B, 0 0 .2vw #800E0B, .5vw .5vw .1vw #40340A;
+    color: #806914;
+  }
+}
+
+.flux {
+  animation: flux 2s linear infinite;
+  -moz-animation: flux 2s linear infinite;
+  -webkit-animation: flux 2s linear infinite;
+  -o-animation: flux 2s linear infinite;
+}
+
+@keyframes flux {
+  0%,
+  100% {
+    /* text-shadow: 0 0 1vw #1041FF, 0 0 3vw #1041FF, 0 0 10vw #1041FF, 0 0 10vw #1041FF, 0 0 .4vw #8BFDFE, .5vw .5vw .1vw #147280; */
+    color: #28D7FE;
+  }
+  50% {
+    /* text-shadow: 0 0 1vw #1041FF, 0 0 3vw #1041FF, 0 0 10vw #1041FF, 0 0 10vw #1041FF, 0 0 .4vw #8BFDFE, .5vw .5vw .1vw #147280; */
+    /* text-shadow: 0 0 .5vw #082180, 0 0 1.5vw #082180, 0 0 5vw #082180, 0 0 5vw #082180, 0 0 .2vw #082180, .5vw .5vw .1vw #0A3940; */
+    color: #28D7FE;
+    /* color: #146C80; */
+  }
+}
+
+.neonbutton {
+    font-family: neon;
+    color: #FB4264;
+    font-size: 2vw; /* Adjust size as needed */
+    padding: 15px 30px;
+    /* border: none; */
+    border-color: #FB4264; /* Change border color on hover */
+    border-radius: 10px;
+    background-color: transparent; /* Transparent background */
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    text-shadow: 0 0 3vw #F40A35;
+    overflow: hidden; /* To contain pseudo-elements */
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .neonbutton:hover {
+    border-color: #FED128;
+    color: #FED128; /* Change color on hover */
+    text-shadow: 0 0 10px #FA1C16, 0 0 20px #FA1C16;
+  }
+  
+  .neonbutton:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1); /* Slightly visible background */
+    z-index: -1; /* Behind the button text */
+    transition: all 0.5s;
+  }
+  
+  .neonbutton:hover:before {
+    background: rgba(255, 255, 255, 0.2); /* Background on hover */
+  }
+  
+  .neonbutton:focus {
+    outline: none; /* Remove outline on focus */
+  }

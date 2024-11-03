@@ -7,6 +7,7 @@ import { useSprings, animated, to as interpolate } from "@react-spring/web";
 import { useDrag } from "react-use-gesture";
 
 import styles from "../styles.module.css";
+import styles2 from "../styles2.module.css";
 
 const initialCards = [
   "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
@@ -112,47 +113,6 @@ function Deck({ onSendInfo, command }) {
       onSendInfo("hey");
     }
 
-    //   if (command === "delete") {
-    //     console.log("delete triggered in Deck");
-    //     console.log(currentCardIndex);
-    //     api.start((i) => {
-    //       if (i === currentCardIndex) {
-    //         return {
-    //           y: -(200 + window.innerWidth),
-    //         };
-    //       }
-    //       return {}; // Keep other cards in place
-    //     });
-
-    //     setIsInArray((prevArray) => {
-    //       const newArray = [...prevArray]; // Create a copy of the previous state
-    //       newArray[currentCardIndex] = false; // Set the desired index to false
-    //       return newArray; // Return the updated array
-    //     });
-
-    //     // setCurrentCardIndex((prevIndex) => {
-    //     //   for (let i = prevIndex - 1; i >= 0; i--) {
-    //     //     if (isInArray[i]) {
-    //     //       return i;
-    //     //     }
-    //     //   }
-    //     //   api.start((i) => {
-    //     //     if (isInArray[i]) {
-    //     //       return to(i);
-    //     //     }
-    //     //   });
-    //     //   for (let i = isInArray.length - 1; i >= 0; i--) {
-    //     //     if (isInArray[i]) {
-    //     //       return i;
-    //     //     }
-    //     //   }
-    //     //   return -1;
-    //     // });
-
-    //     onSendInfo("hey");
-    //   }
-    //
-
     if (command === "delete") {
       console.log("delete triggered in Deck");
       console.log(currentCardIndex);
@@ -214,65 +174,6 @@ function Deck({ onSendInfo, command }) {
 
       onSendInfo("hey");
     }
-
-    // if (command === "delete") {
-    //   console.log("delete triggered in Deck");
-    //   console.log(currentCardIndex);
-
-    //   const startX = 0; // Starting x position (centered)
-    //   const endX = -window.innerWidth; // Ending x position (bottom left)
-    //   const duration = 500; // Duration of the animation in milliseconds
-
-    //   // Parabolic motion with shrinking effect
-    //   const parabolicPath = (t) => {
-    //     const progress = t / duration; // Normalized time
-    //     const height = (window.innerHeight / 4) * Math.sin(Math.PI * progress); // Up then down
-    //     const scale = 1 - progress; // Shrink to 50% of original size
-    //     const x = startX + (endX - startX) * progress; // Linear interpolation for x
-    //     return { x, y: height, scale };
-    //   };
-
-    //   const animate = () => {
-    //     let startTime;
-
-    //     const step = (time) => {
-    //       if (!startTime) startTime = time;
-    //       const elapsed = time - startTime;
-
-    //       if (elapsed < duration) {
-    //         const { x, y, scale } = parabolicPath(elapsed);
-    //         api.start((i) => {
-    //           if (i === currentCardIndex) {
-    //             return { x, y, scale }; // Update position and scale
-    //           }
-    //           return {}; // Keep other cards in place
-    //         });
-    //         requestAnimationFrame(step); // Continue animation
-    //       } else {
-    //         // Final position when animation ends
-    //         api.start((i) => {
-    //           if (i === currentCardIndex) {
-    //             return { x: endX, y: window.innerHeight, scale: 0 }; // Final position and scale down to 0
-    //           }
-    //           return {}; // Keep other cards in place
-    //         });
-    //       }
-    //     };
-
-    //     requestAnimationFrame(step); // Start the animation
-    //   };
-
-    //   animate(); // Call the animate function
-
-    //   // Update the array state to mark the card as deleted
-    //   setIsInArray((prevArray) => {
-    //     const newArray = [...prevArray]; // Create a copy of the previous state
-    //     newArray[currentCardIndex] = false; // Set the desired index to false
-    //     return newArray; // Return the updated array
-    //   });
-
-    //   onSendInfo("hey");
-    // }
   }, [command]); // Add dependencies for useEffect
 
   useEffect(() => {
@@ -299,69 +200,6 @@ function Deck({ onSendInfo, command }) {
       return -1;
     });
   }, [isInArray]); // Runs whenever isInArray changes
-
-  // const bind = useDrag(
-  //   ({
-  //     args: [index],
-  //     down,
-  //     movement: [mx, my],
-  //     direction: [xDir, yDir],
-  //     velocity,
-  //   }) => {
-  //     console.log("dragged" + index);
-  //     const trigger = velocity > 0.2; // If you flick hard enough it should trigger the card to fly out
-  //     // let dirX = xDir < 0 ? -1 : 1; // Direction should either point left or right
-
-  //     // let dirY = yDir < 0 ? -1 : 1;
-  //     let dirX = -1;
-  //     let dirY = -1;
-  //     if (Math.abs(xDir) < Math.abs(yDir)) {
-  //       dirX = 0;
-  //       dirY = yDir < 0 ? -1 : 1;
-  //     } else {
-  //       dirX = xDir < 0 ? -1 : 1;
-  //       dirY = 0;
-  //     }
-
-  //     if (!down && trigger) {
-  //       gone.add(index);
-  //       if (dirY != 0) {
-  //         deleted.add(index);
-  //       }
-  //     }
-  //     api.start((i) => {
-  //       if (index !== i) return;
-  //       const isGone = gone.has(index);
-  //       const x = isGone ? (200 + window.innerWidth) * dirX : down ? mx : 0;
-  //       const y = isGone ? (200 + window.innerWidth) * dirY : down ? my : 0;
-  //       // const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0); // How much the card tilts, flicking it harder makes it rotate faster
-  //       const scale = down ? 1.1 * zoom : 1 * zoom;
-  //       return {
-  //         x,
-  //         y,
-  //         // rot,
-  //         scale,
-  //         delay: undefined,
-  //         config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
-  //       };
-  //     });
-  //     if (!down && gone.size === cards.length)
-  //       setTimeout(() => {
-  //         gone.clear();
-  //         api.start((i) => {
-  //           // Only reset cards that are not in the gone set
-  //           if (!deleted.has(i)) {
-  //             return to(i); // Animate to the original position
-  //           } else {
-  //             gone.add(i);
-  //             return {
-  //               y: -200 - window.innerHeight,
-  //             }; // Keep gone cards out of view
-  //           }
-  //         });
-  //       }, 600);
-  //   }
-  // );
 
   return (
     <>
@@ -515,39 +353,26 @@ export default function Home() {
   };
 
   return (
-    // <div className={styles.container}>
-    //   <p>Status: {isConnected ? "connected" : "disconnected"}</p>
-    //   <p>Transport: {transport}</p>
-    //   <button
-    //     onClick={toggleRecordAudio}
-    //     className={`px-6 py-3 rounded-lg font-semibold text-white shadow-md transition-colors duration-300 ${
-    //       isRecording
-    //         ? "bg-red-500 hover:bg-red-600"
-    //         : "bg-green-500 hover:bg-green-600"
-    //     }`}
-    //   >
-    //     {isRecording ? "Stop Recording" : "Start Recording"}
-    //   </button>
-    //   <div>
-    //     <Deck />
-    //   </div>
-    // </div>
     <div className={styles.container} style={{ border: "2px solid red" }}>
       <div className={styles.container2}>
-        <p style={{ color: "white" }}>
-          Status: {isConnected ? "connected" : "disconnected"}
-        </p>
-        <p style={{ color: "white" }}>Transport: {transport}</p>
-        <button
-          onClick={toggleRecordAudio}
-          className={`px-6 py-3 rounded-lg font-semibold text-white shadow-md transition-colors duration-300 ${
-            isRecording
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-green-500 hover:bg-green-600"
-          }`}
-        >
-          {isRecording ? "Stop Recording" : "Start Recording"}
-        </button>
+        <div className={styles2.container}>
+          <div className={styles2.neon}>Enhancer</div>
+        </div>
+        <div className={styles2.container}>
+          <p style={{ color: "white" }}>Status:</p>
+          <div className={styles2.flux}>
+            {isConnected ? "Connected" : "Disconnected"}
+          </div>
+        </div>
+        <div className={styles2.container}>
+          <p style={{ color: "white" }}>Transport:</p>
+          <div className={styles2.flux}>{transport}</div>
+        </div>
+        <div className={styles2.container}>
+          <button onClick={toggleRecordAudio} className={styles2.neonbutton}>
+            {isRecording ? "Stop Recording" : "Start Recording"}
+          </button>
+        </div>
       </div>
       <div className={styles.container3}>
         <div className={styles.container3a}>
@@ -555,7 +380,21 @@ export default function Home() {
             <Deck onSendInfo={handleInfoFromChild} command={command} />
           </div>
         </div>
-        <div className={styles.container3b}></div>
+        <div className={styles.container3b}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={"http://0.0.0.0:8080/webcam"}
+              alt="Webcam Stream"
+              style={{ width: "100%", height: "auto" }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

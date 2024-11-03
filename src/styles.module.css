@@ -1,6 +1,8 @@
 .container {
     background: lightblue;
     background-image: url("https://images.alphacoders.com/134/thumb-1920-1345265.png");
+    background-repeat: no-repeat;
+    background-position: center center;
     cursor: url('https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/Ad1_-cursor.png') 39 39,
       auto;
     display: flex;
@@ -23,6 +25,7 @@
     width: 25%;
     border: 2px solid red;
     padding: 10px;
+    align-items: center;
 }
 
 .container3 {
