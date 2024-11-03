@@ -316,7 +316,7 @@ function Deck({ onSendInfo, command, lock }) {
             style={{
               transform: interpolate([rot, scale], trans),
               backgroundImage: `url(${cards[i][0]})`,
-              border: "2px solid red",
+              // border: "2px solid red",
               padding: "20px",
             }}
           />
@@ -471,7 +471,7 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.container} style={{ border: "2px solid red" }}>
+    <div className={styles.container}>
       <video
         autoPlay
         loop
