@@ -10,23 +10,60 @@ import styles from "../styles.module.css";
 import styles2 from "../styles2.module.css";
 
 const initialCards = [
-  "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/690px-RWS_Tarot_02_High_Priestess.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/1/13/Tunnel_View%2C_Yosemite_Valley%2C_Yosemite_NP_-_Diliff.jpg",
-];
-
-const replacementCards = [
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
+  ],
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+  ],
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+  ],
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
+  ],
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/690px-RWS_Tarot_02_High_Priestess.jpg",
+  ],
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+  ],
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/1/13/Tunnel_View%2C_Yosemite_Valley%2C_Yosemite_NP_-_Diliff.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
+  ],
+  [
+    "enhances/amogus_stage4.png",
+    "enhances/amogus_stage3.png",
+    "enhances/amogus_stage2.png",
+    "enhances/amogus_stage1.png",
+    "enhances/amogus_stage0.png",
+    "enhances/amogus_stage.png",
+  ],
+  [
+    "enhances/small_stage6.png",
+    "enhances/small_stage5.png",
+    "enhances/small_stage4.png",
+    "enhances/small_stage3.png",
+    "enhances/small_stage2.png",
+    "enhances/small_stage1.png",
+    "enhances/small_stage0.png",
+    "enhances/small_stage.png",
+  ],
+  [
+    "enhances/mystery_stage6.png",
+    "enhances/mystery_stage5.png",
+    "enhances/mystery_stage4.png",
+    "enhances/mystery_stage3.png",
+    "enhances/mystery_stage2.png",
+    "enhances/mystery_stage1.png",
+    "enhances/mystery_stage0.png",
+    "enhances/mystery_stage.png",
+  ],
 ];
 
 // Animation helpers
@@ -47,7 +84,9 @@ const trans = (r: number, s: number) =>
   }deg) rotateZ(${r}deg) scale(${s})`;
 
 function Deck({ onSendInfo, command }) {
-  const [cards, setCards] = useState(initialCards);
+  const [cards, setCards] = useState(() => {
+    return initialCards.map((card) => [card[0], 0]);
+  });
   const [currentCardIndex, setCurrentCardIndex] = useState(cards.length - 1);
   const [isInArray, setIsInArray] = useState(Array(cards.length).fill(true));
   const [props, api] = useSprings(cards.length, (i) => ({
@@ -57,29 +96,53 @@ function Deck({ onSendInfo, command }) {
   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
 
   useEffect(() => {
+    //back, sus, reset
     if (command === "zoom") {
+      // voice
       console.log("zoom triggered in Deck");
       window.open("zoomus://zoom.us/start"); // Opens the Zoom app
     }
 
     if (command === "enhance") {
+      // voice
       console.log("enhance triggered in Deck");
 
       api.start((i) => {
         if (i === currentCardIndex) {
           setCards((prevCards) => {
             const newCards = [...prevCards];
-            newCards[i] = replacementCards[i];
+            let idx: number = newCards[i][1];
+            console.log(idx);
+            if (initialCards[i].length > idx + 1) {
+              newCards[i] = [initialCards[i][idx + 1], idx + 1];
+            }
             return newCards;
           });
         }
         return {}; // Keep other cards in place
       });
+      onSendInfo("hey");
     }
 
-    if (command === "left") {
-      console.log("das me");
-      console.log("left triggered in Deck");
+    //swipe,throw,point,snap,zoomin,middle
+
+    if (command === "")
+      if (command === "zoomin") {
+        console.log("zoomin triggered in Deck");
+        api.start((i) => {
+          if (i === currentCardIndex) {
+            return {
+              scale: 2.0,
+            };
+          }
+          return {};
+        });
+        onSendInfo("hey");
+      }
+
+    if (command === "swipe") {
+      // gesture
+      console.log("swipe triggered in Deck");
       console.log(currentCardIndex);
 
       api.start((i) => {
@@ -113,8 +176,9 @@ function Deck({ onSendInfo, command }) {
       onSendInfo("hey");
     }
 
-    if (command === "delete") {
-      console.log("delete triggered in Deck");
+    if (command === "throw" || command === "delete") {
+      // gesture
+      console.log("throw triggered in Deck");
       console.log(currentCardIndex);
 
       const startX = 0; // Starting x position (centered)
@@ -180,7 +244,6 @@ function Deck({ onSendInfo, command }) {
     if (isInArray.every((val) => val)) {
       return; // Skip if all values are true
     }
-    console.log("lol");
     setCurrentCardIndex((prevIndex) => {
       for (let i = prevIndex - 1; i >= 0; i--) {
         if (isInArray[i]) {
@@ -213,7 +276,7 @@ function Deck({ onSendInfo, command }) {
             // {...bind(i)}
             style={{
               transform: interpolate([rot, scale], trans),
-              backgroundImage: `url(${cards[i]})`,
+              backgroundImage: `url(${cards[i][0]})`,
               border: "2px solid red",
               padding: "20px",
             }}
@@ -381,19 +444,11 @@ export default function Home() {
           </div>
         </div>
         <div className={styles.container3b}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src={"http://0.0.0.0:8080/webcam"}
-              alt="Webcam Stream"
-              style={{ height: "100%" }}
-            />
-          </div>
+          <img
+            src={"http://0.0.0.0:8080/webcam"}
+            alt="Webcam Stream"
+            style={{ height: "100%" }}
+          />
         </div>
       </div>
     </div>
